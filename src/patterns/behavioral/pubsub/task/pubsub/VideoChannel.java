@@ -6,8 +6,8 @@ import java.util.List;
 /**
   Description object of video channel(model).
  */
-public class VideoChannel {
-    private final List subscribers;
+public class VideoChannel implements Publisher{
+    private final List<Subscriber> subscribers;
     private final List<Video> videos;
     private ChannelAdmin admin;
 
@@ -23,7 +23,7 @@ public class VideoChannel {
 
     public void addVideo(Video video) {
         videos.add(video);
-
+        notifyUser("Добавлено новое видео " + video.getName(), video);
     }
 
     public ChannelAdmin getAdmin() {
@@ -32,5 +32,23 @@ public class VideoChannel {
 
     public void setAdmin(ChannelAdmin admin) {
         this.admin = admin;
+    }
+
+    @Override
+    public void registerUser(Subscriber subscriber) {
+        subscribers.add(subscriber);
+    }
+
+    @Override
+    public void unregisterUser(Subscriber subscriber) {
+        subscribers.remove(subscriber);
+    }
+
+    @Override
+    public void notifyUser(String message, Video video) {
+        System.out.println(message);
+        for (Subscriber subscriber: subscribers) {
+            subscriber.process(video);
+        }
     }
 }
